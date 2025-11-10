@@ -1,0 +1,3 @@
+[submodule "landing"]
+	path = landing
+	url = git@gitlab.com:bounadiallo/guardian-landing.git

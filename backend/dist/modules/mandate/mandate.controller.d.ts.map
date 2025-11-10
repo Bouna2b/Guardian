@@ -1,0 +1,1 @@
+{"version":3,"file":"mandate.controller.d.ts","sourceRoot":"","sources":["../../../src/modules/mandate/mandate.controller.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAEnD,qBAEa,iBAAiB;IAChB,OAAO,CAAC,QAAQ,CAAC,cAAc;gBAAd,cAAc,EAAE,cAAc;IAGrD,SAAS,CAAQ,GAAG,EAAE,GAAG;;;;;;IAM/B,MAAM,CAAQ,GAAG,EAAE,GAAG;IAMtB,IAAI,CAAQ,GAAG,EAAE,GAAG;;;;CAIrB"}

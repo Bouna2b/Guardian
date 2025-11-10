@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: guardian_v1-postgres
+    environment:
+      POSTGRES_USER: guardian
+      POSTGRES_PASSWORD: guardian
+      POSTGRES_DB: guardian
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guardian"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    container_name: guardian_v1-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://guardian:guardian@postgres:5432/guardian
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_KEY: ${SUPABASE_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      YOUSIGN_API_KEY: ${YOUSIGN_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GOOGLE_SEARCH_ENGINE_ID: ${GOOGLE_SEARCH_ENGINE_ID:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    command: >
+      sh -c "npx prisma migrate deploy && node dist/main.js"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: guardian_v1-frontend
+    env_file:
+      - frontend/.env.local
+    environment:
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://backend:3001}
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "8080:8080"
+
+  landing:
+    build:
+      context: ./landing
+    container_name: guardian_v1-landing
+    env_file:
+      - landing/.env
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres-data:
